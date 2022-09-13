@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="LagerModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Baugruppen">
+    <Key>
+      <PropertyRef Name="Baugruppennummer" />
+    </Key>
+    <Property Name="Baugruppe" Type="String" MaxLength="40" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Baugruppennummer" Type="String" MaxLength="40" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Maschine" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Hersteller" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Ersatzteile" Relationship="Self.FK_Ersatzteile_Baugruppe" FromRole="Baugruppe" ToRole="Ersatzteile" />
+  </EntityType>
+  <EntityType Name="Ersatzteile">
+    <Key>
+      <PropertyRef Name="Artikelnummer" />
+    </Key>
+    <Property Name="Artikelbezeichnung" Type="String" MaxLength="40" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Artikelnummer" Type="String" MaxLength="40" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Lagerplatz" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <Property Name="Anzahl" Type="Int32" Nullable="false" />
+    <Property Name="Baugruppennummer" Type="String" MaxLength="40" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Maschinenummer" Type="String" MaxLength="40" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Baugruppen" Relationship="Self.FK_Ersatzteile_Baugruppe" FromRole="Ersatzteile" ToRole="Baugruppe" />
+    <NavigationProperty Name="Maschinen" Relationship="LagerModel.FK_Ersatzteile_Maschine1" FromRole="Ersatzteile" ToRole="Maschinen" />
+  </EntityType>
+  <EntityType Name="Maschinen">
+    <Key>
+      <PropertyRef Name="Maschinennummer" />
+    </Key>
+    <Property Name="Maschine" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Maschinennummer" Type="String" MaxLength="40" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Baujahr" Type="DateTime" Precision="0" />
+    <Property Name="Hersteller" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Ersatzteile1" Relationship="LagerModel.FK_Ersatzteile_Maschine1" FromRole="Maschinen" ToRole="Ersatzteile" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <Association Name="FK_Ersatzteile_Baugruppe">
+    <End Role="Baugruppe" Type="LagerModel.Baugruppen" Multiplicity="1" />
+    <End Role="Ersatzteile" Type="Self.Ersatzteile" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Baugruppe">
+        <PropertyRef Name="Baugruppennummer" />
+      </Principal>
+      <Dependent Role="Ersatzteile">
+        <PropertyRef Name="Baugruppennummer" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="LagerEntities1" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Baugruppen" EntityType="LagerModel.Baugruppen" />
+    <EntitySet Name="Ersatzteile" EntityType="Self.Ersatzteile" />
+    <EntitySet Name="Maschinen" EntityType="LagerModel.Maschinen" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+    <AssociationSet Name="FK_Ersatzteile_Baugruppe" Association="Self.FK_Ersatzteile_Baugruppe">
+      <End Role="Baugruppe" EntitySet="Baugruppen" />
+      <End Role="Ersatzteile" EntitySet="Ersatzteile" />
+    </AssociationSet>
+    <FunctionImport Name="sp_alterdiagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="version" Mode="In" Type="Int32" />
+      <Parameter Name="definition" Mode="In" Type="Binary" />
+    </FunctionImport>
+    <FunctionImport Name="sp_creatediagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="version" Mode="In" Type="Int32" />
+      <Parameter Name="definition" Mode="In" Type="Binary" />
+    </FunctionImport>
+    <FunctionImport Name="sp_dropdiagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(LagerModel.sp_helpdiagramdefinition_Result)">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(LagerModel.sp_helpdiagrams_Result)">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_renamediagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="new_diagramname" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="sp_upgraddiagrams" />
+    <AssociationSet Name="FK_Ersatzteile_Maschine1" Association="LagerModel.FK_Ersatzteile_Maschine1">
+      <End Role="Maschinen" EntitySet="Maschinen" />
+      <End Role="Ersatzteile" EntitySet="Ersatzteile" />
+    </AssociationSet>
+  </EntityContainer>
+  <ComplexType Name="sp_helpdiagramdefinition_Result">
+    <Property Type="Int32" Name="version" Nullable="true" />
+    <Property Type="Binary" Name="definition" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_helpdiagrams_Result">
+    <Property Type="String" Name="Database" Nullable="true" MaxLength="128" />
+    <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
+    <Property Type="Int32" Name="OwnerID" Nullable="false" />
+  </ComplexType>
+  <Association Name="FK_Ersatzteile_Maschine1">
+    <End Type="LagerModel.Maschinen" Role="Maschinen" Multiplicity="1" />
+    <End Type="LagerModel.Ersatzteile" Role="Ersatzteile" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Maschinen">
+        <PropertyRef Name="Maschinennummer" />
+      </Principal>
+      <Dependent Role="Ersatzteile">
+        <PropertyRef Name="Maschinenummer" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

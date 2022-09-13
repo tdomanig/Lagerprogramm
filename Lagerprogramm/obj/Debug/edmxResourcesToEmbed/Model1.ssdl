@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="LagerModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Baugruppen">
+    <Key>
+      <PropertyRef Name="Baugruppennummer" />
+    </Key>
+    <Property Name="Baugruppe" Type="varchar" MaxLength="40" Nullable="false" />
+    <Property Name="Baugruppennummer" Type="varchar" MaxLength="40" Nullable="false" />
+    <Property Name="Maschine" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="Hersteller" Type="varchar" MaxLength="20" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Ersatzteile">
+    <Key>
+      <PropertyRef Name="Artikelnummer" />
+    </Key>
+    <Property Name="Artikelbezeichnung" Type="varchar" MaxLength="40" Nullable="false" />
+    <Property Name="Artikelnummer" Type="varchar" MaxLength="40" Nullable="false" />
+    <Property Name="Lagerplatz" Type="varchar" MaxLength="15" />
+    <Property Name="Anzahl" Type="int" Nullable="false" />
+    <Property Name="Baugruppennummer" Type="varchar" MaxLength="40" Nullable="false" />
+    <Property Name="Maschinenummer" Type="varchar" MaxLength="40" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Maschinen">
+    <Key>
+      <PropertyRef Name="Maschinennummer" />
+    </Key>
+    <Property Name="Maschine" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="Maschinennummer" Type="varchar" MaxLength="40" Nullable="false" />
+    <Property Name="Baujahr" Type="date" />
+    <Property Name="Hersteller" Type="varchar" MaxLength="20" Nullable="false" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <Association Name="FK_Ersatzteile_Baugruppe">
+    <End Role="Baugruppen" Type="Self.Baugruppen" Multiplicity="1" />
+    <End Role="Ersatzteile" Type="Self.Ersatzteile" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Baugruppen">
+        <PropertyRef Name="Baugruppennummer" />
+      </Principal>
+      <Dependent Role="Ersatzteile">
+        <PropertyRef Name="Baugruppennummer" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Ersatzteile_Maschine">
+    <End Role="Maschinen" Type="Self.Maschinen" Multiplicity="1" />
+    <End Role="Ersatzteile" Type="Self.Ersatzteile" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Maschinen">
+        <PropertyRef Name="Maschinennummer" />
+      </Principal>
+      <Dependent Role="Ersatzteile">
+        <PropertyRef Name="Maschinenummer" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="LagerModelStoreContainer">
+    <EntitySet Name="Baugruppen" EntityType="Self.Baugruppen" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Ersatzteile" EntityType="Self.Ersatzteile" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Maschinen" EntityType="Self.Maschinen" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Ersatzteile_Baugruppe" Association="Self.FK_Ersatzteile_Baugruppe">
+      <End Role="Baugruppen" EntitySet="Baugruppen" />
+      <End Role="Ersatzteile" EntitySet="Ersatzteile" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Ersatzteile_Maschine" Association="Self.FK_Ersatzteile_Maschine">
+      <End Role="Maschinen" EntitySet="Maschinen" />
+      <End Role="Ersatzteile" EntitySet="Ersatzteile" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
